@@ -91,3 +91,8 @@ Run rabbitmq exposing several ports:
 ```bash
 docker run -d --hostname tom-rabbit --name some-rabbit -p 8081:15672 -p 5671:5671 -p 5672:5672 rabbitmq:3-management
 ```
+
+Create mysql database with volume, port mapping and root password:
+```bash
+docker run --name guru-mysql -p 3306:3306 -v /home/tom/mysql/data:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.32
+```
