@@ -1,6 +1,69 @@
-# spring-boot-mongodb
-This repository contains a Spring Boot example project for MongoDB.
+# Docker for Java Developers
 
-For a code review of this repo, see my related [blog post](https://springframework.guru/3402-2/).
+### Dockerfiles
+- Mongodb dockerfile:
+https://github.com/docker-library/mongo/blob/master/6.0/Dockerfile
+- recipe of how to build a docker image
 
-You can learn more about my courses [here](http://courses.springframework.guru/courses/) on my site.
+Ask for specific ubuntu image:
+```dockerfile
+FROM ubuntu:jammy
+```
+Add user to database:
+```dockerfile
+RUN set -eux; \
+	groupadd --gid 999 --system mongodb; \
+	useradd --uid 999 --system --gid mongodb --home-dir /data/db mongodb; \
+	mkdir -p /data/db /data/configdb; \
+	chown -R mongodb:mongodb /data/db /data/configdb
+```
+
+Create image layers:
+
+```dockerfile
+
+
+RUN set -ex; \
+	\
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		wget \
+	; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	\
+	wget -O /js-yaml.js "https://github.com/nodeca/js-yaml/raw/${JSYAML_VERSION}/dist/js-yaml.js"; \
+# TODO some sort of download verification here
+	\
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	\
+# smoke test
+	chmod +x /usr/local/bin/gosu; \
+	gosu --version; \
+	gosu nobody true
+
+RUN mkdir /docker-entrypoint-initdb.d
+
+RUN set -ex; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	set -- '39BD841E4BE5FB195A65400E6A26B1AE64C3C388'; \
+	for key; do \
+		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
+	done; \
+	mkdir -p /etc/apt/keyrings; \
+	gpg --batch --export "$@" > /etc/apt/keyrings/mongodb.gpg; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME"
+
+```
