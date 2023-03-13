@@ -67,3 +67,27 @@ RUN set -ex; \
 	rm -rf "$GNUPGHOME"
 
 ```
+
+Ubuntu base image is extended by the mongodb image.
+
+### Assign storage on the host
+Tell mongo instance to map to specific directory on host machine:
+
+Create a data directory on a suitable volume on your host system, e.g. /my/own/datadir.
+
+Start your mongo container like this:
+```bash
+$ docker run --name some-mongo -v /my/own/datadir:/data/db -d mongo
+```
+Persist data:
+```bash
+docker run -p 27017:27017 -v /home/tom/dockerdata/mongo:/data/db -d mongo
+```
+check logs with:
+```bash
+docker logs <container name>
+```
+Run rabbitmq exposing several ports:
+```bash
+docker run -d --hostname tom-rabbit --name some-rabbit -p 8081:15672 -p 5671:5671 -p 5672:5672 rabbitmq:3-management
+```
