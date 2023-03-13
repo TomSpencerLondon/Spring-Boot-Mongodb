@@ -96,3 +96,8 @@ Create mysql database with volume, port mapping and root password:
 ```bash
 docker run --name guru-mysql -p 3306:3306 -v /home/tom/mysql/data:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.32
 ```
+Also without password:
+```bash
+docker run --name guru-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -v /home/tom/mysql/data:/etc/mysql/conf.d
+mysql
+```
