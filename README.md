@@ -101,3 +101,35 @@ Also without password:
 docker run --name guru-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -v /home/tom/mysql/data:/etc/mysql/conf.d
 mysql
 ```
+
+### Docker house Keeping
+- with development use docker can leave behind a lot of files
+- These files will grow and consume a lot of disk space
+- This is less of an issue on productoin systems where containers aren't being built
+and restarted all the time
+- There are 3 key areas of house keeping:
+  - continers
+  - images
+  - volumes
+
+#### Cleaning up Containers
+- Kill all running docker containers
+  - docker kill $(docker ps -q)
+- Delete all stopped docker containers
+  - docker rm $(docker ps -a -q)
+
+### Cleaning up images
+- Remove a docker image
+  - docker rmi <image name>
+- Delete untagged (dangling) images
+  - docker rmi $(docker images -q -f dangling=true)
+- Delete all images
+  - docker rmi $(docker images -q)
+
+#### Cleaning up volumes
+- Once a volume is no longer associated with a container, it is considered 'dangling'
+- Remove all dangling volumes
+  - docker volume rm $(docker volume ls -f dangling=true -q)
+- NOTE: Does not remove files from host system in shared volumes
+
+
