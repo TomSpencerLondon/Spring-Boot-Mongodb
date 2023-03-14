@@ -85,7 +85,7 @@ docker run -p 27017:27017 -v /home/tom/dockerdata/mongo:/data/db -d mongo
 ```
 check logs with:
 ```bash
-docker logs <container name>
+docker logs -f <container name>
 ```
 Run rabbitmq exposing several ports:
 ```bash
@@ -100,6 +100,11 @@ Also without password:
 ```bash
 docker run --name guru-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -v /home/tom/mysql/data:/etc/mysql/conf.d
 mysql
+```
+
+Shell into a running docker container:
+```bash
+docker exec -it <container name> bash
 ```
 
 ### Docker house Keeping
