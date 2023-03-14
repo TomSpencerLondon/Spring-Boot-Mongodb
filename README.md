@@ -137,4 +137,17 @@ and restarted all the time
   - docker volume rm $(docker volume ls -f dangling=true -q)
 - NOTE: Does not remove files from host system in shared volumes
 
+### Set up network so that Spring container can access mongodb container:
+```bash
+docker network create mongo_network
 
+docker run -p 27071:27017 --name mongodb --network mongo_network -d mongo
+
+docker build -t springguru .
+
+docker run -p 8081:8080 --network mongo_network springguru
+```
+You should also refer to the name of the mongo docker container in the Spring application.properties:
+```properties
+spring.data.mongodb.host=mongodb
+```
